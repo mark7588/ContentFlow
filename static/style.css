@@ -1,0 +1,93 @@
+/* static/style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #0056b3;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+form {
+    display: flex;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    border-radius: 5px;
+    overflow: hidden; /* For input and button to sit nicely */
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-right: none;
+    border-radius: 5px 0 0 5px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 25px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: red;
+    background-color: #ffe5e5;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.summary-output {
+    background-color: #e9f7ef;
+    border: 1px solid #c3e6cb;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.summary-output h2 {
+    color: #28a745;
+    margin-top: 0;
+    border-bottom: 1px solid #d4edda;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.summary-output p {
+    white-space: pre-wrap; /* Preserve newlines from LLM output */
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
