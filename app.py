@@ -18,7 +18,8 @@ if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY not found in environment variables. Please set it.")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-pro') # You can choose other models as well, e.g., 'gemini-1.5-flash-latest'
+# Use a supported Gemini model. If you get a 404 error, check the available models for your API key.
+model = genai.GenerativeModel('gemini-1.5-flash-latest')  # Try this model, or use ListModels to find others
 
 # --- Helper function to extract YouTube video ID ---
 def get_video_id(url):
@@ -31,11 +32,28 @@ def get_video_id(url):
 
 # --- Function to get YouTube transcript ---
 def get_youtube_transcript(video_id):
+    print(f"Debug: Fetching transcript for video_id: {video_id}")
     try:
-        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+        transcripts = YouTubeTranscriptApi.list_transcripts(video_id)
+        print(f"Debug: Available transcript languages: {[t.language for t in transcripts]} ")
+        # Try to get the manually created transcript first, otherwise fallback to the first available
+        try:
+            transcript_obj = transcripts.find_manually_created_transcript(['en'])
+            print("Debug: Found manually created English transcript.")
+        except Exception as e:
+            print(f"Debug: No manually created English transcript. Error: {e}")
+            try:
+                transcript_obj = transcripts.find_transcript(['en'])
+                print("Debug: Found auto-generated English transcript.")
+            except Exception as e2:
+                print(f"Debug: No English transcript found at all. Error: {e2}")
+                return None
+        transcript_list = transcript_obj.fetch()
         transcript = " ".join([item['text'] for item in transcript_list])
+        print(f"Debug: Transcript length: {len(transcript)} characters")
         return transcript
     except NoTranscriptFound:
+        print("Debug: NoTranscriptFound exception raised.")
         return None
     except Exception as e:
         print(f"Error fetching transcript: {e}")
