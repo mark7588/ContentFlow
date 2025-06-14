@@ -32,38 +32,30 @@ def get_video_id(url):
 
 # --- Function to get YouTube transcript ---
 def get_youtube_transcript(video_id):
-    print(f"Debug: Fetching transcript for video_id: {video_id}")
     try:
         transcripts = YouTubeTranscriptApi.list_transcripts(video_id)
-        print(f"Debug: Available transcript languages: {[t.language for t in transcripts]} ")
-        # Try to get the manually created transcript first, otherwise fallback to the first available
         try:
             transcript_obj = transcripts.find_manually_created_transcript(['en'])
-            print("Debug: Found manually created English transcript.")
-        except Exception as e:
-            print(f"Debug: No manually created English transcript. Error: {e}")
+            return transcript_obj.fetch()
+        except Exception:
             try:
                 transcript_obj = transcripts.find_transcript(['en'])
-                print("Debug: Found auto-generated English transcript.")
-            except Exception as e2:
-                print(f"Debug: No English transcript found at all. Error: {e2}")
-                return None
-        transcript_list = transcript_obj.fetch()
-        transcript = " ".join([item['text'] for item in transcript_list])
-        print(f"Debug: Transcript length: {len(transcript)} characters")
-        return transcript
-    except NoTranscriptFound:
-        print("Debug: NoTranscriptFound exception raised.")
-        return None
-    except Exception as e:
-        print(f"Error fetching transcript: {e}")
+                return transcript_obj.fetch()
+            except Exception:
+                try:
+                    for transcript in transcripts:
+                        transcript_obj = transcript
+                        return transcript_obj.fetch()
+                except Exception:
+                    return None
+    except Exception:
         return None
 
 # --- Function to summarize text using Gemini ---
 def summarize_text(text):
     prompt = f"""
-    You are an expert summarizer. Your task is to provide a concise and clear summary of the following text, which is a transcript from a YouTube video.
-    Also, extract 3-5 main key points from the video.
+    You are an expert summarizer. Your task is to provide a concise and clear summary of the following text. The transcript is from a YouTube video.
+    Also, extract 5 main key points from the video. You can add more key points if you find them relevant.
 
     ---
     Video Transcript:
